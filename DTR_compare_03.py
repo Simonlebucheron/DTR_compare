@@ -8,6 +8,7 @@ Created on Thu Oct 19 13:18:06 2023
 import pandas as pd
 import os
 import datetime
+import re
 
 # Trouver le chemin absolu du répertoire contenant le script
 dir_path = os.path.abspath(os.path.dirname(__file__))
@@ -23,7 +24,8 @@ set1 = set(pd.read_excel(excel_files[0]).stack().tolist())
 set2 = set(pd.read_excel(excel_files[1]).stack().tolist())
 
 # Créer un ensemble de tous les mots commençant par "DTR"
-mots_dtr = set([mot for mot in set1.union(set2) if isinstance(mot, str) and mot.startswith('DTR')])
+mots_dtr = set([mot for mot in set1.union(set2) if isinstance(mot, str) and (mot.startswith('DTR')
+                or re.search('^S\w{7}P', mot))])
 nb_DTR_total = len(mots_dtr)
 
 # Trouver le sous-ensemble des mots commençant par "DTR" dans set2
@@ -34,15 +36,15 @@ nb_DTR_presents = len(DTR_presents)
 DTR_absents = mots_dtr.difference(set2)
 nb_DTR_absents = len(DTR_absents)
 
-# Afficher la liste des DTR présents et absents
-print("Nombre total de référence DTR trouvées : ", nb_DTR_total)
-print("Nombre de DTR présents : ", nb_DTR_presents)
-#print("Liste DTR présents : ", list(DTR_presents))
-print("Nombre de DTR absents : ", nb_DTR_absents)
-#print("Liste DTR absents : ", list(DTR_absents))
+# Afficher la liste des composants présents et absents
+print("Nombre total de référence composants trouvées : ", nb_DTR_total)
+print("Nombre de composants présents : ", nb_DTR_presents)
+#print("Liste composants présents : ", list(DTR_presents))
+print("Nombre de composants absents : ", nb_DTR_absents)
+#print("Liste composants absents : ", list(DTR_absents))
 DTR_absents_format1 = [str(element) for element in DTR_absents]
 DTR_absents_format2 = ', '.join(DTR_absents_format1)
-print("Liste DTR absents formaté : ", DTR_absents_format2)
+print("Liste composants absents formaté : ", DTR_absents_format2)
 
 # Générer le fichier texte contenant les informations
 now = datetime.datetime.now()
@@ -59,12 +61,12 @@ with open(filename_output, 'w') as f:
     f.write('Auteur : S. DELAIGUE\n')
     f.write('Fichiers traités : {}\n'.format(", ".join(excel_files_names)))
     f.write('\n')
-    f.write('Nombre total de référence DTR trouvées : {}\n'.format(nb_DTR_total))
+    f.write('Nombre total de références de composants trouvées : {}\n'.format(nb_DTR_total))
     f.write('\n')
-    f.write('Nombre de DTR présents : {}\n'.format(nb_DTR_presents))
+    f.write('Nombre de composants présents : {}\n'.format(nb_DTR_presents))
     # On commente l'affichage de la liste des composants présents
-    # f.write('Liste DTR présents : {}\n'.format(list(DTR_presents)))
+    # f.write('Liste composants présents : {}\n'.format(list(DTR_presents)))
     f.write('\n')
-    f.write('Nombre de DTR absents : {}\n'.format(nb_DTR_absents))
-    #f.write('Liste DTR absents : {}\n'.format(list(DTR_absents)))
-    f.write('Liste DTR absents formaté : {}\n'.format(DTR_absents_format2))
+    f.write('Nombre de composants absents : {}\n'.format(nb_DTR_absents))
+    #f.write('Liste composants absents : {}\n'.format(list(DTR_absents)))
+    f.write('Liste composants absents formaté : {}\n'.format(DTR_absents_format2))
